@@ -35,4 +35,10 @@ public class Product {
         this.unit = unit;
         this.status = StatusProduct.ACTIVE;
     }
+
+    public void update(String description, String unit, StatusProduct status) {
+        if (description != null) this.description = description;
+        if (unit != null) this.unit = unit;
+        if (status != null) this.status = status;
+    }
 }
