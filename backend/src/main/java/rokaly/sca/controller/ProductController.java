@@ -39,4 +39,10 @@ public class ProductController {
     public ResponseEntity<ProductResponse> putProduct(@RequestBody @Valid UpdateProductRequest data) {
         return productService.putProductService(data);
     }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> deleteLogicProduct(@PathVariable Long id) {
+        return productService.deleteLogicProductService(id);
+    }
 }

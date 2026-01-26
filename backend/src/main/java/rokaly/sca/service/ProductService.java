@@ -25,12 +25,12 @@ public class ProductService {
         Product product = new Product(data.code(), data.description(), data.unit());
         repository.save(product);
         var uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getId()).toUri();
-        ProductResponse dto = new ProductResponse(product.getId(), data.code(), data.description(), data.unit(), product.getStatus());
+        ProductResponse dto = new ProductResponse(product.getId(), data.code(), data.description(), data.unit(), product.getStatus().getStatusPT());
         return ResponseEntity.created(uri).body(dto);
     }
 
     public ResponseEntity<Page<ProductResponse>> getAllService(Pageable pagination) {
-        Page<ProductResponse> page = repository.findAll(pagination).map(p -> new ProductResponse(p.getId(), p.getCode(), p.getDescription(), p.getUnit(), p.getStatus()));
+        Page<ProductResponse> page = repository.findAll(pagination).map(p -> new ProductResponse(p.getId(), p.getCode(), p.getDescription(), p.getUnit(), p.getStatus().getStatusPT()));
         return ResponseEntity.ok(page);
     }
 
@@ -39,7 +39,15 @@ public class ProductService {
                 () -> new EntityNotFoundException("Produto não encontrado com id: " + data.id()));
 
         product.update(data.description(), data.unit(), data.status());
-        ProductResponse dto = new ProductResponse(product.getId(), product.getCode(), product.getDescription(), product.getUnit(), product.getStatus());
+        ProductResponse dto = new ProductResponse(product.getId(), product.getCode(), product.getDescription(), product.getUnit(), product.getStatus().getStatusPT());
         return ResponseEntity.ok(dto);
+    }
+
+    public ResponseEntity<Void> deleteLogicProductService(Long id) {
+        Product product = repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Produto não encontrado com id: " + id));
+
+        product.deleteLogic();
+        return ResponseEntity.noContent().build();
     }
 }

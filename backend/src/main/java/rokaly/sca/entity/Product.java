@@ -41,4 +41,8 @@ public class Product {
         if (unit != null) this.unit = unit;
         if (status != null) this.status = status;
     }
+
+    public void deleteLogic() {
+        this.status = StatusProduct.INACTIVE;
+    }
 }
