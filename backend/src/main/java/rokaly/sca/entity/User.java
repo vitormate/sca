@@ -7,6 +7,7 @@ import lombok.Setter;
 import rokaly.sca.utils.enums.Role;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor

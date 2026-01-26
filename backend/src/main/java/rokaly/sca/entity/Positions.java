@@ -7,6 +7,7 @@ import lombok.Setter;
 import rokaly.sca.utils.enums.StatusPosition;
 
 @Entity
+@Table(name = "positions")
 @Getter
 @Setter
 @NoArgsConstructor
