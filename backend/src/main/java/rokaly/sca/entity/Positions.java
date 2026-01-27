@@ -26,4 +26,9 @@ public class Positions {
         this.code = code;
         this.status = StatusPosition.ACTIVA;
     }
+
+    public void update(String code, StatusPosition status) {
+        if (code != null) this.code = code;
+        if (status != null) this.status = status;
+    }
 }

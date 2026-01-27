@@ -8,8 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.PositionsRequest;
-import rokaly.sca.dto.PositionsResponse;
+import rokaly.sca.dto.*;
 import rokaly.sca.service.PositionsService;
 
 @RestController
@@ -31,5 +30,11 @@ public class PositionsController {
     @GetMapping
     public ResponseEntity<Page<PositionsResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
         return positionsService.getAllService(pagination);
+    }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity<PositionsResponse> putPosition(@RequestBody @Valid UpdatePositionRequest data) {
+        return positionsService.putPositionService(data);
     }
 }

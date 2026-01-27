@@ -1,5 +1,6 @@
 package rokaly.sca.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.PositionsRequest;
 import rokaly.sca.dto.PositionsResponse;
+import rokaly.sca.dto.UpdatePositionRequest;
 import rokaly.sca.entity.Positions;
 import rokaly.sca.repository.PositionRepository;
 
@@ -23,12 +25,20 @@ public class PositionsService {
         Positions positions = new Positions(data.code());
         repository.save(positions);
         var uri = uriBuilder.path("/positions/{id}").buildAndExpand(positions.getId()).toUri();
-        PositionsResponse dto = new PositionsResponse(positions.getId(), data.code(), positions.getStatus().getStatusPT());
+        PositionsResponse dto = new PositionsResponse(positions.getId(), positions.getCode(), positions.getStatus().getStatusPT());
         return ResponseEntity.created(uri).body(dto);
     }
 
     public ResponseEntity<Page<PositionsResponse>> getAllService(Pageable pagination) {
         Page<PositionsResponse> page = repository.findAll(pagination).map(p -> new PositionsResponse(p.getId(), p.getCode(), p.getStatus().getStatusPT()));
         return ResponseEntity.ok(page);
+    }
+
+    public ResponseEntity<PositionsResponse> putPositionService(UpdatePositionRequest data) {
+        Positions positions = repository.findById(data.id()).orElseThrow(
+                () -> new EntityNotFoundException("Posição não encontrado com id: " + data.id()));
+        positions.update(data.code(), data.status());
+        PositionsResponse dto = new PositionsResponse(positions);
+        return ResponseEntity.ok(dto);
     }
 }
