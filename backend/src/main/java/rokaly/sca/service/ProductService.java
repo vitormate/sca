@@ -25,12 +25,12 @@ public class ProductService {
         Product product = new Product(data.code(), data.description(), data.unit());
         repository.save(product);
         var uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getId()).toUri();
-        ProductResponse dto = new ProductResponse(product.getId(), data.code(), data.description(), data.unit(), product.getStatus().getStatusPT());
+        ProductResponse dto = new ProductResponse(product);
         return ResponseEntity.created(uri).body(dto);
     }
 
     public ResponseEntity<Page<ProductResponse>> getAllService(Pageable pagination) {
-        Page<ProductResponse> page = repository.findAll(pagination).map(p -> new ProductResponse(p.getId(), p.getCode(), p.getDescription(), p.getUnit(), p.getStatus().getStatusPT()));
+        Page<ProductResponse> page = repository.findAll(pagination).map(ProductResponse::new);
         return ResponseEntity.ok(page);
     }
 
@@ -39,7 +39,7 @@ public class ProductService {
                 () -> new EntityNotFoundException("Produto não encontrado com id: " + data.id()));
 
         product.update(data.description(), data.unit(), data.status());
-        ProductResponse dto = new ProductResponse(product.getId(), product.getCode(), product.getDescription(), product.getUnit(), product.getStatus().getStatusPT());
+        ProductResponse dto = new ProductResponse(product);
         return ResponseEntity.ok(dto);
     }
 

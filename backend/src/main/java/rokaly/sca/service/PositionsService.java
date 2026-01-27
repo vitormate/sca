@@ -25,12 +25,12 @@ public class PositionsService {
         Positions positions = new Positions(data.code());
         repository.save(positions);
         var uri = uriBuilder.path("/positions/{id}").buildAndExpand(positions.getId()).toUri();
-        PositionsResponse dto = new PositionsResponse(positions.getId(), positions.getCode(), positions.getStatus().getStatusPT());
+        PositionsResponse dto = new PositionsResponse(positions);
         return ResponseEntity.created(uri).body(dto);
     }
 
     public ResponseEntity<Page<PositionsResponse>> getAllService(Pageable pagination) {
-        Page<PositionsResponse> page = repository.findAll(pagination).map(p -> new PositionsResponse(p.getId(), p.getCode(), p.getStatus().getStatusPT()));
+        Page<PositionsResponse> page = repository.findAll(pagination).map(PositionsResponse::new);
         return ResponseEntity.ok(page);
     }
 
