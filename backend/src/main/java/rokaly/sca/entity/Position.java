@@ -11,7 +11,7 @@ import rokaly.sca.utils.enums.StatusPosition;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Positions {
+public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +22,7 @@ public class Positions {
     @Column(length = 25, nullable = false)
     private StatusPosition status;
 
-    public Positions(String code) {
+    public Position(String code) {
         this.code = code;
         this.status = StatusPosition.ACTIVE;
     }
