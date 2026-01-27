@@ -24,11 +24,15 @@ public class Positions {
 
     public Positions(String code) {
         this.code = code;
-        this.status = StatusPosition.ACTIVA;
+        this.status = StatusPosition.ACTIVE;
     }
 
     public void update(String code, StatusPosition status) {
         if (code != null) this.code = code;
         if (status != null) this.status = status;
+    }
+
+    public void deleteLogic() {
+        this.status = StatusPosition.INACTIVE;
     }
 }

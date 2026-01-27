@@ -37,4 +37,10 @@ public class PositionsController {
     public ResponseEntity<PositionsResponse> putPosition(@RequestBody @Valid UpdatePositionRequest data) {
         return positionsService.putPositionService(data);
     }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> deleteLogicPosition(@PathVariable Long id) {
+        return positionsService.deleteLogicService(id);
+    }
 }

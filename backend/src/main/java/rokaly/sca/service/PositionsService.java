@@ -41,4 +41,11 @@ public class PositionsService {
         PositionsResponse dto = new PositionsResponse(positions);
         return ResponseEntity.ok(dto);
     }
+
+    public ResponseEntity<Void> deleteLogicService(Long id) {
+        Positions positions = repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Posição não encontrado com id: " + id));
+        positions.deleteLogic();
+        return ResponseEntity.noContent().build();
+    }
 }
