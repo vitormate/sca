@@ -7,6 +7,7 @@ import lombok.Setter;
 import rokaly.sca.utils.enums.StatusPosition;
 
 @Entity
+@Table(name = "positions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,4 +21,18 @@ public class Positions {
 
     @Column(length = 25, nullable = false)
     private StatusPosition status;
+
+    public Positions(String code) {
+        this.code = code;
+        this.status = StatusPosition.ACTIVE;
+    }
+
+    public void update(String code, StatusPosition status) {
+        if (code != null) this.code = code;
+        if (status != null) this.status = status;
+    }
+
+    public void deleteLogic() {
+        this.status = StatusPosition.INACTIVE;
+    }
 }

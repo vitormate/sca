@@ -11,7 +11,7 @@ public enum StatusProduct {
         this.status = status;
     }
 
-    public String getStatus() {
+    public String getStatusPT() {
         return status;
     }
 }

@@ -2,8 +2,9 @@ package rokaly.sca.utils.enums;
 
 public enum StatusPosition {
 
-    ACTIVA("ATIVA"),
-    BLOCKED("BLOQUEADA");
+    ACTIVE("ATIVA"),
+    BLOCKED("BLOQUEADA"),
+    INACTIVE("INATIVA");
 
     private String status;
 
@@ -11,7 +12,7 @@ public enum StatusPosition {
         this.status = status;
     }
 
-    public String getStatus() {
+    public String getStatusPT() {
         return status;
     }
 }
