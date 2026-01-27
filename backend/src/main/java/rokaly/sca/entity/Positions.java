@@ -21,4 +21,9 @@ public class Positions {
 
     @Column(length = 25, nullable = false)
     private StatusPosition status;
+
+    public Positions(String code) {
+        this.code = code;
+        this.status = StatusPosition.ACTIVA;
+    }
 }
