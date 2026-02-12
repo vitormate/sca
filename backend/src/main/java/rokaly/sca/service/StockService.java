@@ -1,6 +1,8 @@
 package rokaly.sca.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -53,8 +55,13 @@ public class StockService {
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
-        StockEntryResponse dto = new StockEntryResponse(stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
+        StockEntryResponse dto = new StockEntryResponse(stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
 
         return ResponseEntity.created(uri).body(dto);
+    }
+
+    public ResponseEntity<Page<StockEntryResponse>> getAll(Pageable pagination) {
+        Page<StockEntryResponse> stock = stockRepository.findAll(pagination).map(StockEntryResponse::new);
+        return ResponseEntity.ok(stock);
     }
 }
