@@ -22,6 +22,9 @@ public class MovementStock {
     @Column(name = "product_code", length = 50, nullable = false)
     private String productCode;
 
+    @Column(name = "product_name", length = 150)
+    private String productName;
+
     @Column(name = "from_position", length = 50)
     private String fromPosition;
 
@@ -43,4 +46,19 @@ public class MovementStock {
 
     @Column(length = 100, nullable = false)
     private String responsible;
+
+    @Column(length = 255)
+    private String reason;
+
+    public MovementStock(String productCode, String productName, String positionCode, BigDecimal amount, MovementType type, String name, String reason) {
+        this.productCode = productCode;
+        this.productName = productName;
+        this.toPosition = positionCode;
+        this.requestedBy = name;
+        this.amount = amount;
+        this.dateTime = LocalDateTime.now();
+        this.movementType = type;
+        this.responsible = name;
+        this.reason = reason;
+    }
 }

@@ -35,4 +35,11 @@ public class Position {
     public void deleteLogic() {
         this.status = StatusPosition.INACTIVE;
     }
+
+    public void isActivePositionStatus(StatusPosition status) {
+        if (status != StatusPosition.ACTIVE) {
+            // Trocar para Exception de Regra de Negócio quando criar o GlobalException
+            throw new RuntimeException("Position not active. Status: " + status);
+        }
+    }
 }

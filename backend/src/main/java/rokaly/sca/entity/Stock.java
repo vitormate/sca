@@ -27,4 +27,18 @@ public class Stock {
 
     @Column(nullable = false)
     private BigDecimal amount;
+
+    public Stock(Product product, Position position, BigDecimal amount) {
+        this.product = product;
+        this.position = position;
+        this.amount = amount;
+    }
+
+
+    public static void isValidEntryAmount(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Amount precisa ser maior do que 0(zero)");
+        }
+
+    }
 }

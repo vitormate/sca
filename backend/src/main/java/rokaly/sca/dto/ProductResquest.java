@@ -6,7 +6,7 @@ public record ProductResquest(
         @NotBlank
         String code,
         @NotBlank
-        String description,
+        String name,
         @NotBlank
         String unit) {
 }

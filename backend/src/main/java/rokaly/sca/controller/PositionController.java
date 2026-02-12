@@ -12,7 +12,7 @@ import rokaly.sca.dto.*;
 import rokaly.sca.service.PositionService;
 
 @RestController
-@RequestMapping("/api/v1/positions")
+@RequestMapping("/api/v2/positions")
 public class PositionController {
 
     private final PositionService positionService;
