@@ -29,9 +29,9 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private StatusProduct status;
 
-    public Product(String code, String description, String unit) {
+    public Product(String code, String name, String unit) {
         this.code = code;
-        this.name = description;
+        this.name = name;
         this.unit = unit;
         this.status = StatusProduct.ACTIVE;
     }

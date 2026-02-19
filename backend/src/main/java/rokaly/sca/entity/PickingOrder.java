@@ -1,0 +1,47 @@
+package rokaly.sca.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import rokaly.sca.utils.enums.PickingOrderStatus;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@Table(name = "picking_order")
+@Getter
+@Setter
+@NoArgsConstructor
+public class PickingOrder {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 50, nullable = false)
+    private String createdBy;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "separator_id")
+    private User separator;
+
+    @Column(name = "assigned_at", nullable = true)
+    private LocalDateTime assignedAt;
+
+    @Column(name = "finished_at", nullable = true)
+    private LocalDateTime finishedAt;
+
+    @Column(name = "canceled_at", nullable = true)
+    private LocalDateTime canceledAt;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PickingOrderStatus status;
+
+    @OneToMany(mappedBy = "pickingOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PickingProduct> pickingProducts;
+}

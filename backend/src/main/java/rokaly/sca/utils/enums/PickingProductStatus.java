@@ -1,13 +1,14 @@
 package rokaly.sca.utils.enums;
 
-public enum StatusProduct {
+public enum PickingProductStatus {
 
-    ACTIVE("ATIVO"),
-    INACTIVE("INATIVO");
+    WAITING("Aguardando"),
+    PICKING("Separando"),
+    COLLECTED("Coletado");
 
     private final String status;
 
-    StatusProduct(String status) {
+    PickingProductStatus(String status) {
         this.status = status;
     }
 

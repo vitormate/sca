@@ -9,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.StockEntryRequest;
-import rokaly.sca.dto.StockEntryResponse;
+import rokaly.sca.dto.StockEntryExitResponse;
+import rokaly.sca.dto.StockExitRequest;
 import rokaly.sca.service.StockService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/stock")
@@ -24,16 +27,16 @@ public class StockController {
 
     @PostMapping("entry")
     @Transactional
-    public ResponseEntity<StockEntryResponse> createEntries(@RequestBody @Valid StockEntryRequest data, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<StockEntryExitResponse> createEntries(@RequestBody @Valid StockEntryRequest data, UriComponentsBuilder uriBuilder) {
         return stockService.createEntries(data, uriBuilder);
     }
-//
-//    @PostMapping("exit")
-//    @Transactional
-//    public ResponseEntity<StockResponse> createExit(@RequestBody @Valid StockRequest data) {
-//        return stockService.createRecord(data);
-//    }
-//
+
+    @PostMapping("exit")
+    @Transactional
+    public ResponseEntity<Void> createExit(@RequestBody @Valid List<StockExitRequest> data) {
+        return stockService.createExit(data);
+    }
+
 //    @PostMapping("transfer")
 //    @Transactional
 //    public ResponseEntity<StockResponse> createTransfer(@RequestBody @Valid StockRequest data) {
@@ -47,7 +50,7 @@ public class StockController {
 //    }
 
     @GetMapping
-    public ResponseEntity<Page<StockEntryResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
+    public ResponseEntity<Page<StockEntryExitResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
         return stockService.getAll(pagination);
     }
 }

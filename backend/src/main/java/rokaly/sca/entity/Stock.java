@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "stock", uniqueConstraints = {@UniqueConstraint(columnNames = {"product_id", "position_id"})})
@@ -35,10 +37,22 @@ public class Stock {
     }
 
 
-    public static void isValidEntryAmount(BigDecimal amount) {
+    public static void isValidAmount(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Amount precisa ser maior do que 0(zero)");
+//            Substitutir por business exception quando fiz a global exception
+            throw new RuntimeException("Amount need to be bigger than 0(zero). Amount: " + amount);
         }
 
+    }
+
+    public static void hasStock(List<Stock> listStock, String productCode, BigDecimal amount) {
+        BigDecimal checkAmount = listStock.stream()
+                .map(Stock::getAmount)
+                .reduce(BigDecimal.ZERO, (BigDecimal::add));
+
+        if (checkAmount.compareTo(amount) < 0) {
+//            Substitutir por business exception quando fiz a global exception
+            throw new RuntimeException("Insufficient Stock Amount! Product: " + productCode + " | Amount: " + checkAmount);
+        }
     }
 }

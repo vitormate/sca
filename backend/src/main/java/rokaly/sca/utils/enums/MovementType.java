@@ -6,7 +6,7 @@ public enum MovementType {
     OUT("SAÍDA"),
     MOVEMENT("MOVIMENTAÇÃO");
 
-    private String type;
+    private final String type;
 
     MovementType(String type) {
         this.type = type;

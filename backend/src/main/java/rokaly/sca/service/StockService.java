@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.StockEntryRequest;
-import rokaly.sca.dto.StockEntryResponse;
+import rokaly.sca.dto.StockEntryExitResponse;
+import rokaly.sca.dto.StockExitRequest;
 import rokaly.sca.entity.MovementStock;
 import rokaly.sca.entity.Position;
 import rokaly.sca.entity.Product;
@@ -17,6 +18,10 @@ import rokaly.sca.repository.PositionRepository;
 import rokaly.sca.repository.ProductRepository;
 import rokaly.sca.repository.StockRepository;
 import rokaly.sca.utils.enums.MovementType;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class StockService {
@@ -33,8 +38,8 @@ public class StockService {
         this.positionRepository = positionRepository;
     }
 
-    public ResponseEntity<StockEntryResponse> createEntries(StockEntryRequest data, UriComponentsBuilder uriBuilder) {
-        Stock.isValidEntryAmount(data.amount());
+    public ResponseEntity<StockEntryExitResponse> createEntries(StockEntryRequest data, UriComponentsBuilder uriBuilder) {
+        Stock.isValidAmount(data.amount());
 
         Product product = productRepository.findById(data.productId()).orElseThrow(
                 () -> new EntityNotFoundException("Product not found with id: " + data.productId())
@@ -55,13 +60,22 @@ public class StockService {
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
-        StockEntryResponse dto = new StockEntryResponse(stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
+        StockEntryExitResponse dto = new StockEntryExitResponse(stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
 
         return ResponseEntity.created(uri).body(dto);
     }
 
-    public ResponseEntity<Page<StockEntryResponse>> getAll(Pageable pagination) {
-        Page<StockEntryResponse> stock = stockRepository.findAll(pagination).map(StockEntryResponse::new);
+    public ResponseEntity<Page<StockEntryExitResponse>> getAll(Pageable pagination) {
+        Page<StockEntryExitResponse> stock = stockRepository.findAll(pagination).map(StockEntryExitResponse::new);
         return ResponseEntity.ok(stock);
+    }
+
+    public ResponseEntity<Void> createExit(List<StockExitRequest> data) {
+        data.forEach(d -> {
+            Stock.isValidAmount(d.amount());
+            List<Stock> listStock = stockRepository.findByProductCode(d.productCode());
+            Stock.hasStock(listStock, d.productCode(), d.amount());
+        });
+        return ResponseEntity.ok().build();
     }
 }

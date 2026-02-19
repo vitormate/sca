@@ -6,7 +6,7 @@ public enum StatusPosition {
     BLOCKED("BLOQUEADA"),
     INACTIVE("INATIVA");
 
-    private String status;
+    private final String status;
 
     StatusPosition(String status) {
         this.status = status;
