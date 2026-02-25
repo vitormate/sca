@@ -2,13 +2,14 @@ package rokaly.sca.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.PickingOrderCreateRequest;
+import rokaly.sca.dto.PickingOrderResponse;
 import rokaly.sca.service.PickingOrderService;
 
 @RestController
@@ -21,9 +22,14 @@ public class PickingOrderController {
         this.pickingOrderService = pickingOrderService;
     }
 
-    @PostMapping
+    @PostMapping("new")
     @Transactional
     public ResponseEntity<Void> createOrder(@RequestBody @Valid PickingOrderCreateRequest data, UriComponentsBuilder uriBuilder) {
         return pickingOrderService.createOrder(data, uriBuilder);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<PickingOrderResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
+        return pickingOrderService.getAll(pagination);
     }
 }

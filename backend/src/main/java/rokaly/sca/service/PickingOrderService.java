@@ -1,10 +1,13 @@
 package rokaly.sca.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.PickingOrderCreateRequest;
+import rokaly.sca.dto.PickingOrderResponse;
 import rokaly.sca.entity.PickingOrder;
 import rokaly.sca.entity.PickingProduct;
 import rokaly.sca.entity.Product;
@@ -52,5 +55,10 @@ public class PickingOrderService {
         pickingOrderRepository.save(pickingOrder);
 
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<Page<PickingOrderResponse>> getAll(Pageable pagination) {
+        Page<PickingOrderResponse> order = pickingOrderRepository.findAll(pagination).map(PickingOrderResponse::new);
+        return ResponseEntity.ok(order);
     }
 }
