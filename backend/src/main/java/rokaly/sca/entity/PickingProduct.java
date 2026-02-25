@@ -43,4 +43,14 @@ public class PickingProduct {
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private PickingProductCollectedStatus statusCollected;
+
+    public PickingProduct(BigDecimal requestedAmount, String suggestedPosition, Product product, PickingOrder pickingOrder) {
+        this.requestedAmount = requestedAmount;
+        this.collectedAmount = BigDecimal.ZERO;
+        this.suggestedPosition = suggestedPosition;
+        this.product = product;
+        this.pickingOrder = pickingOrder;
+        this.status = PickingProductStatus.WAITING;
+        this.statusCollected = PickingProductCollectedStatus.WAITING;
+    }
 }

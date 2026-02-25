@@ -2,6 +2,7 @@ package rokaly.sca.utils.enums;
 
 public enum PickingProductCollectedStatus {
 
+    WAITING("Aguardando"),
     PARTIAL("Parcial"),
     COMPLETED("Completo");
 

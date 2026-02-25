@@ -16,7 +16,7 @@ import rokaly.sca.service.StockService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v2/stock")
+@RequestMapping("/api/v3/stock")
 public class StockController {
 
     private final StockService stockService;

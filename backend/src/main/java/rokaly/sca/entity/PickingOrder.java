@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rokaly.sca.dto.PickingProductsRequest;
 import rokaly.sca.utils.enums.PickingOrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,5 +45,25 @@ public class PickingOrder {
     private PickingOrderStatus status;
 
     @OneToMany(mappedBy = "pickingOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PickingProduct> pickingProducts;
+    private List<PickingProduct> pickingProducts = new ArrayList<>();
+
+    public PickingOrder(String createdBy, LocalDateTime createdAt, PickingOrderStatus status) {
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.status = status;
+    }
+
+    public static void validProducts(List<PickingProductsRequest> pickingProducts) {
+
+        boolean hasDuplicates = pickingProducts.stream()
+                .map(PickingProductsRequest::productId)
+                .distinct()
+                .count() != pickingProducts.size();
+
+        if (hasDuplicates) {
+            // Trocar por business exception
+            throw new RuntimeException("The products must be different in a Picking Order!");
+        }
+
+    }
 }

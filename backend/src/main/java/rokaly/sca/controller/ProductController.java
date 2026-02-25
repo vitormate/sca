@@ -14,7 +14,7 @@ import rokaly.sca.dto.UpdateProductRequest;
 import rokaly.sca.service.ProductService;
 
 @RestController
-@RequestMapping("/api/v2/products")
+@RequestMapping("/api/v3/products")
 public class ProductController {
 
     private final ProductService productService;
