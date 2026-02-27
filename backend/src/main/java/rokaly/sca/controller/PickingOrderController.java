@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
+import rokaly.sca.dto.PickingOrderAssignRequest;
 import rokaly.sca.dto.PickingOrderCreateRequest;
 import rokaly.sca.dto.PickingOrderResponse;
 import rokaly.sca.service.PickingOrderService;
@@ -24,12 +24,18 @@ public class PickingOrderController {
 
     @PostMapping("new")
     @Transactional
-    public ResponseEntity<Void> createOrder(@RequestBody @Valid PickingOrderCreateRequest data, UriComponentsBuilder uriBuilder) {
-        return pickingOrderService.createOrder(data, uriBuilder);
+    public ResponseEntity<Void> createOrder(@RequestBody @Valid PickingOrderCreateRequest data) {
+        return pickingOrderService.createOrder(data);
     }
 
     @GetMapping
     public ResponseEntity<Page<PickingOrderResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
         return pickingOrderService.getAll(pagination);
+    }
+
+    @PutMapping("assign")
+    @Transactional
+    public ResponseEntity<Void> assignOrder(@RequestBody @Valid PickingOrderAssignRequest data) {
+        return pickingOrderService.assignOrder(data);
     }
 }
