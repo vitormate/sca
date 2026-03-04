@@ -66,13 +66,4 @@ public class StockService {
         Page<StockEntryResponse> stock = stockRepository.findAll(pagination).map(StockEntryResponse::new);
         return ResponseEntity.ok(stock);
     }
-
-    public ResponseEntity<Void> createExit(List<StockExitRequest> data) {
-        data.forEach(d -> {
-            Stock.isValidAmount(d.amount());
-            List<Stock> listStock = stockRepository.findByProductCode(d.productCode());
-            Stock.hasStock(listStock, d.productCode(), d.amount());
-        });
-        return ResponseEntity.ok().build();
-    }
 }

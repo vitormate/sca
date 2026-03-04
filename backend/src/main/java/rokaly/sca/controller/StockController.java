@@ -31,12 +31,6 @@ public class StockController {
         return stockService.createEntries(data, uriBuilder);
     }
 
-    @PostMapping("exit")
-    @Transactional
-    public ResponseEntity<Void> createExit(@RequestBody @Valid List<StockExitRequest> data) {
-        return stockService.createExit(data);
-    }
-
 //    @PostMapping("transfer")
 //    @Transactional
 //    public ResponseEntity<StockResponse> createTransfer(@RequestBody @Valid StockRequest data) {

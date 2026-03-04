@@ -56,11 +56,19 @@ public class Stock {
         }
     }
 
-    public void updateAmount(BigDecimal collectedAmount) {
-        if (this.getAmount().compareTo(collectedAmount) < 0) {
-            throw new RuntimeException("Insufficient stock!");
+    public void validStock() {
+        if (this.amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Insufficient stock! Stock: " + this.amount);
         }
+    }
 
+    public void updateAmount(BigDecimal collectedAmount) {
         this.setAmount(this.getAmount().subtract(collectedAmount));
     }
+
+    public void addAmount(BigDecimal collectedAmount) {
+        this.setAmount(this.amount.add(collectedAmount));
+    }
+
+
 }

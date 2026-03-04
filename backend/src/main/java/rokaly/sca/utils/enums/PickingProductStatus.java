@@ -4,7 +4,8 @@ public enum PickingProductStatus {
 
     WAITING("Aguardando"),
     PICKING("Separando"),
-    COLLECTED("Coletado");
+    COLLECTED("Coletado"),
+    CANCELED("Cancelado");
 
     private final String status;
 

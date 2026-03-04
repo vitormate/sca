@@ -102,6 +102,8 @@ public class PickingOrderService {
                 () -> new EntityNotFoundException("Stock not found with position: " + data.positionCode())
         );
 
+        stock.validStock();
+
         PickingOrder pickingOrder = pickingOrderRepository.findById(orderId).orElseThrow(
                 () -> new EntityNotFoundException("Order not found with id: " + orderId)
         );
@@ -135,6 +137,31 @@ public class PickingOrderService {
 
         pickingOrder.getPickingProducts().forEach(p -> {
             p.setStatus(PickingProductStatus.COLLECTED);
+        });
+
+        PickingOrderResponse orderResponse = new PickingOrderResponse(pickingOrder);
+
+        return ResponseEntity.ok(orderResponse);
+    }
+
+    public ResponseEntity<PickingOrderResponse> cancelOrder(Long orderId) {
+        PickingOrder pickingOrder = pickingOrderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException("Order not found with id: " + orderId)
+        );
+
+        pickingOrder.setCanceledAt(LocalDateTime.now());
+        pickingOrder.setStatus(PickingOrderStatus.CANCELED);
+
+        pickingOrder.getPickingProducts().forEach(p -> {
+            if (p.getCollectedAmount().compareTo(BigDecimal.ZERO) > 0) {
+                Stock stock = stockRepository.findByProductCodeAndPositionCode(p.getProduct().getCode(), p.getSuggestedPosition()).orElseThrow(
+                        () -> new EntityNotFoundException("Stock not found with product code and position code: " + p.getProduct().getCode() + " | " + p.getSuggestedPosition())
+                );
+
+                stock.addAmount(p.getCollectedAmount());
+            }
+
+            p.setStatus(PickingProductStatus.CANCELED);
         });
 
         PickingOrderResponse orderResponse = new PickingOrderResponse(pickingOrder);

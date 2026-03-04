@@ -60,4 +60,10 @@ public class PickingOrderController {
     public ResponseEntity<PickingOrderResponse> finishOrderWithPartialCollection(@PathVariable Long orderId) {
         return pickingOrderService.finishOrderWithPartialCollection(orderId);
     }
+
+    @PutMapping("/{orderId}/products/cancel")
+    @Transactional
+    public ResponseEntity<PickingOrderResponse> cancelOrder(@PathVariable Long orderId) {
+        return pickingOrderService.cancelOrder(orderId);
+    }
 }
