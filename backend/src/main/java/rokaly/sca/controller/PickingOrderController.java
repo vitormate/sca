@@ -7,7 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rokaly.sca.dto.*;
+import rokaly.sca.dto.request.PickingOrderAssignRequest;
+import rokaly.sca.dto.request.PickingOrderCreateRequest;
+import rokaly.sca.dto.request.PickingProductsCollectRequest;
+import rokaly.sca.dto.response.PickingOrderResponse;
+import rokaly.sca.dto.response.PickingProductsResponse;
 import rokaly.sca.service.PickingOrderService;
 
 import java.util.List;
@@ -49,5 +53,11 @@ public class PickingOrderController {
     @Transactional
     public ResponseEntity<PickingProductsResponse> collectProduct(@PathVariable Long orderId, @PathVariable Long pickingProductId, @RequestBody @Valid PickingProductsCollectRequest data) {
         return pickingOrderService.collectProduct(orderId, pickingProductId, data);
+    }
+
+    @PutMapping("/{orderId}/products/finish")
+    @Transactional
+    public ResponseEntity<PickingOrderResponse> finishOrderWithPartialCollection(@PathVariable Long orderId) {
+        return pickingOrderService.finishOrderWithPartialCollection(orderId);
     }
 }

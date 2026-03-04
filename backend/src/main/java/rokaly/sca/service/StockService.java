@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.StockEntryRequest;
-import rokaly.sca.dto.StockEntryResponse;
-import rokaly.sca.dto.StockExitRequest;
+import rokaly.sca.dto.request.StockEntryRequest;
+import rokaly.sca.dto.response.StockEntryResponse;
+import rokaly.sca.dto.request.StockExitRequest;
 import rokaly.sca.entity.MovementStock;
 import rokaly.sca.entity.Position;
 import rokaly.sca.entity.Product;
@@ -17,7 +17,6 @@ import rokaly.sca.repository.MovementStockRepository;
 import rokaly.sca.repository.PositionRepository;
 import rokaly.sca.repository.ProductRepository;
 import rokaly.sca.repository.StockRepository;
-import rokaly.sca.utils.enums.MovementType;
 
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class StockService {
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
-        StockEntryResponse dto = new StockEntryResponse(stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
+        StockEntryResponse dto = new StockEntryResponse(stock.getId(), stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
 
         return ResponseEntity.created(uri).body(dto);
     }

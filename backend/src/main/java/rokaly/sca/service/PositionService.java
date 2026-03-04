@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.PositionsRequest;
-import rokaly.sca.dto.PositionsResponse;
-import rokaly.sca.dto.UpdatePositionRequest;
+import rokaly.sca.dto.request.PositionsRequest;
+import rokaly.sca.dto.response.PositionsResponse;
+import rokaly.sca.dto.request.UpdatePositionRequest;
 import rokaly.sca.entity.Position;
 import rokaly.sca.repository.PositionRepository;
 

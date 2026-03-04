@@ -5,10 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import rokaly.sca.dto.*;
+import rokaly.sca.dto.request.PickingOrderAssignRequest;
+import rokaly.sca.dto.request.PickingOrderCreateRequest;
+import rokaly.sca.dto.request.PickingProductsCollectRequest;
+import rokaly.sca.dto.response.PickingOrderResponse;
+import rokaly.sca.dto.response.PickingProductsResponse;
 import rokaly.sca.entity.*;
 import rokaly.sca.repository.*;
-import rokaly.sca.utils.enums.MovementType;
 import rokaly.sca.utils.enums.PickingOrderStatus;
 import rokaly.sca.utils.enums.PickingProductCollectedStatus;
 import rokaly.sca.utils.enums.PickingProductStatus;
@@ -120,5 +123,22 @@ public class PickingOrderService {
         PickingProductsResponse product = new PickingProductsResponse(pickingProduct);
 
         return ResponseEntity.ok(product);
+    }
+
+    public ResponseEntity<PickingOrderResponse> finishOrderWithPartialCollection(Long orderId) {
+        PickingOrder pickingOrder = pickingOrderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException("Order not found with id: " + orderId)
+        );
+
+        pickingOrder.setFinishedAt(LocalDateTime.now());
+        pickingOrder.setStatus(PickingOrderStatus.FINISHED);
+
+        pickingOrder.getPickingProducts().forEach(p -> {
+            p.setStatus(PickingProductStatus.COLLECTED);
+        });
+
+        PickingOrderResponse orderResponse = new PickingOrderResponse(pickingOrder);
+
+        return ResponseEntity.ok(orderResponse);
     }
 }

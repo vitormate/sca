@@ -1,4 +1,4 @@
-package rokaly.sca.dto;
+package rokaly.sca.dto.response;
 
 import rokaly.sca.entity.Position;
 

@@ -8,7 +8,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.*;
+import rokaly.sca.dto.request.PositionsRequest;
+import rokaly.sca.dto.request.UpdatePositionRequest;
+import rokaly.sca.dto.response.PositionsResponse;
 import rokaly.sca.service.PositionService;
 
 @RestController

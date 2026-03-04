@@ -1,4 +1,4 @@
-package rokaly.sca.dto;
+package rokaly.sca.dto.response;
 
 import rokaly.sca.entity.PickingOrder;
 import rokaly.sca.utils.enums.PickingOrderStatus;

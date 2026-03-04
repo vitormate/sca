@@ -8,9 +8,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.ProductResponse;
-import rokaly.sca.dto.ProductResquest;
-import rokaly.sca.dto.UpdateProductRequest;
+import rokaly.sca.dto.response.ProductResponse;
+import rokaly.sca.dto.request.ProductResquest;
+import rokaly.sca.dto.request.UpdateProductRequest;
 import rokaly.sca.service.ProductService;
 
 @RestController

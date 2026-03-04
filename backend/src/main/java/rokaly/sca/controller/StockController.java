@@ -8,9 +8,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.StockEntryRequest;
-import rokaly.sca.dto.StockEntryResponse;
-import rokaly.sca.dto.StockExitRequest;
+import rokaly.sca.dto.request.StockEntryRequest;
+import rokaly.sca.dto.response.StockEntryResponse;
+import rokaly.sca.dto.request.StockExitRequest;
 import rokaly.sca.service.StockService;
 
 import java.util.List;

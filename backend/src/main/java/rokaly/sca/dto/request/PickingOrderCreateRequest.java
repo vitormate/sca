@@ -1,9 +1,8 @@
-package rokaly.sca.dto;
+package rokaly.sca.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record PickingOrderCreateRequest(

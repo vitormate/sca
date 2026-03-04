@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.ProductResponse;
-import rokaly.sca.dto.ProductResquest;
-import rokaly.sca.dto.UpdateProductRequest;
+import rokaly.sca.dto.response.ProductResponse;
+import rokaly.sca.dto.request.ProductResquest;
+import rokaly.sca.dto.request.UpdateProductRequest;
 import rokaly.sca.entity.Product;
 import rokaly.sca.repository.ProductRepository;
 

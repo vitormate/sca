@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import rokaly.sca.dto.PickingProductsRequest;
+import rokaly.sca.dto.request.PickingProductsRequest;
 import rokaly.sca.utils.enums.PickingOrderStatus;
 import rokaly.sca.utils.enums.PickingProductCollectedStatus;
 

@@ -1,4 +1,4 @@
-package rokaly.sca.dto;
+package rokaly.sca.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
