@@ -5,17 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import rokaly.sca.dto.PickingOrderAssignRequest;
-import rokaly.sca.dto.PickingOrderCreateRequest;
-import rokaly.sca.dto.PickingOrderResponse;
-import rokaly.sca.entity.PickingOrder;
-import rokaly.sca.entity.PickingProduct;
-import rokaly.sca.entity.Product;
-import rokaly.sca.entity.User;
+import rokaly.sca.dto.*;
+import rokaly.sca.entity.*;
 import rokaly.sca.repository.*;
+import rokaly.sca.utils.enums.MovementType;
 import rokaly.sca.utils.enums.PickingOrderStatus;
+import rokaly.sca.utils.enums.PickingProductCollectedStatus;
+import rokaly.sca.utils.enums.PickingProductStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PickingOrderService {
@@ -24,12 +24,16 @@ public class PickingOrderService {
     private final ProductRepository productRepository;
     private final PickingOrderRepository pickingOrderRepository;
     private final UserRepository userRepository;
+    private final MovementStockRepository movementStockRepository;
+    private final PickingProductRepository pickingProductRepository;
 
-    public PickingOrderService(StockRepository stockRepository, ProductRepository productRepository, PickingOrderRepository pickingOrderRepository, PickingProductRepository pickingProductRepository, UserRepository userRepository) {
+    public PickingOrderService(StockRepository stockRepository, ProductRepository productRepository, PickingOrderRepository pickingOrderRepository, UserRepository userRepository, MovementStockRepository movementStockRepository, PickingProductRepository pickingProductRepository) {
         this.stockRepository = stockRepository;
         this.productRepository = productRepository;
         this.pickingOrderRepository = pickingOrderRepository;
         this.userRepository = userRepository;
+        this.movementStockRepository = movementStockRepository;
+        this.pickingProductRepository = pickingProductRepository;
     }
 
     public ResponseEntity<Void> createOrder(PickingOrderCreateRequest data) {
@@ -42,7 +46,7 @@ public class PickingOrderService {
                     .findPositionByProductId(p.productId())
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + p.productId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + p.productId()));
 
             Product product = productRepository.findById(p.productId()).orElseThrow(
                     () -> new EntityNotFoundException("Product not found with id: " + p.productId())
@@ -62,9 +66,9 @@ public class PickingOrderService {
         return ResponseEntity.ok(order);
     }
 
-    public ResponseEntity<Void> assignOrder(PickingOrderAssignRequest data) {
-        PickingOrder pickingOrder = pickingOrderRepository.findById(data.pickingOrderId()).orElseThrow(
-                () -> new RuntimeException("Picking Order not found with id: " + data.pickingOrderId())
+    public ResponseEntity<Void> assignOrder(Long id, PickingOrderAssignRequest data) {
+        PickingOrder pickingOrder = pickingOrderRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Picking Order not found with id: " + id)
         );
 
         User user = userRepository.findByUsername(data.separator());
@@ -72,6 +76,49 @@ public class PickingOrderService {
         pickingOrder.setAssignedAt(LocalDateTime.now());
         pickingOrder.setStatus(PickingOrderStatus.ASSIGNED);
 
+        pickingOrder.getPickingProducts().forEach(p -> {
+            p.setStatus(PickingProductStatus.PICKING);
+            p.setStatusCollected(PickingProductCollectedStatus.IN_PROGRESS);
+        });
+
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<List<PickingProductsResponse>> getAllProductsFromOrder(Long orderId) {
+        PickingOrder pickingOrder = pickingOrderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException("Order not found with id: " + orderId)
+        );
+
+        List<PickingProductsResponse> products = pickingOrder.getPickingProducts().stream().map(PickingProductsResponse::new).toList();
+
+        return ResponseEntity.ok(products);
+    }
+
+    public ResponseEntity<PickingProductsResponse> collectProduct(Long orderId, Long pickingProductId, PickingProductsCollectRequest data) {
+        Stock stock = stockRepository.findByPositionCode(data.positionCode()).orElseThrow(
+                () -> new EntityNotFoundException("Stock not found with position: " + data.positionCode())
+        );
+
+        PickingOrder pickingOrder = pickingOrderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException("Order not found with id: " + orderId)
+        );
+
+
+        PickingProduct pickingProduct = pickingProductRepository.findByIdAndOrderId(pickingProductId, orderId).orElseThrow(
+                () -> new EntityNotFoundException("Picking Product not found with id: " + pickingProductId)
+        );
+
+        pickingProduct.validProduct(stock.getProduct().getCode());
+        BigDecimal collectNow = pickingProduct.collectProduct(stock.getAmount());
+        stock.updateAmount(collectNow);
+
+        MovementStock movementStock = MovementStock.createOut(pickingProduct.getProduct().getCode(), pickingProduct.getProduct().getName(), data.positionCode(), collectNow, pickingOrder.getCreatedBy());
+        movementStockRepository.save(movementStock);
+
+        pickingOrder.checkAndFinish();
+
+        PickingProductsResponse product = new PickingProductsResponse(pickingProduct);
+
+        return ResponseEntity.ok(product);
     }
 }

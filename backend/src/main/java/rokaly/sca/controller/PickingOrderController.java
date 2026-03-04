@@ -7,13 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rokaly.sca.dto.PickingOrderAssignRequest;
-import rokaly.sca.dto.PickingOrderCreateRequest;
-import rokaly.sca.dto.PickingOrderResponse;
+import rokaly.sca.dto.*;
 import rokaly.sca.service.PickingOrderService;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v3/order")
+@RequestMapping("/api/v4/order")
 public class PickingOrderController {
 
     private final PickingOrderService pickingOrderService;
@@ -33,9 +33,21 @@ public class PickingOrderController {
         return pickingOrderService.getAll(pagination);
     }
 
-    @PutMapping("assign")
+    @GetMapping("/{orderId}/products")
+    public ResponseEntity<List<PickingProductsResponse>> getAllProductsFromOrder(@PathVariable Long orderId) {
+        return pickingOrderService.getAllProductsFromOrder(orderId);
+    }
+
+    @PutMapping("/{orderId}/products/assign")
     @Transactional
-    public ResponseEntity<Void> assignOrder(@RequestBody @Valid PickingOrderAssignRequest data) {
-        return pickingOrderService.assignOrder(data);
+    public ResponseEntity<Void> assignOrder(@PathVariable Long orderId, @RequestBody @Valid PickingOrderAssignRequest data) {
+        return pickingOrderService.assignOrder(orderId, data);
+    }
+
+
+    @PutMapping("/{orderId}/products/{pickingProductId}/collect")
+    @Transactional
+    public ResponseEntity<PickingProductsResponse> collectProduct(@PathVariable Long orderId, @PathVariable Long pickingProductId, @RequestBody @Valid PickingProductsCollectRequest data) {
+        return pickingOrderService.collectProduct(orderId, pickingProductId, data);
     }
 }

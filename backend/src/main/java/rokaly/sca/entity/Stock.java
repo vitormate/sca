@@ -55,4 +55,12 @@ public class Stock {
             throw new RuntimeException("Insufficient Stock Amount! Product: " + productCode + " | Amount: " + checkAmount);
         }
     }
+
+    public void updateAmount(BigDecimal collectedAmount) {
+        if (this.getAmount().compareTo(collectedAmount) < 0) {
+            throw new RuntimeException("Insufficient stock!");
+        }
+
+        this.setAmount(this.getAmount().subtract(collectedAmount));
+    }
 }

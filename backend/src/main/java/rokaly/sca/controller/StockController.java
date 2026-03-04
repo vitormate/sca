@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.StockEntryRequest;
-import rokaly.sca.dto.StockEntryExitResponse;
+import rokaly.sca.dto.StockEntryResponse;
 import rokaly.sca.dto.StockExitRequest;
 import rokaly.sca.service.StockService;
 
@@ -27,7 +27,7 @@ public class StockController {
 
     @PostMapping("entry")
     @Transactional
-    public ResponseEntity<StockEntryExitResponse> createEntries(@RequestBody @Valid StockEntryRequest data, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<StockEntryResponse> createEntries(@RequestBody @Valid StockEntryRequest data, UriComponentsBuilder uriBuilder) {
         return stockService.createEntries(data, uriBuilder);
     }
 
@@ -50,7 +50,7 @@ public class StockController {
 //    }
 
     @GetMapping
-    public ResponseEntity<Page<StockEntryExitResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
+    public ResponseEntity<Page<StockEntryResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
         return stockService.getAll(pagination);
     }
 }

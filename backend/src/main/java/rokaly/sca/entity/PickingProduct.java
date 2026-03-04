@@ -53,4 +53,32 @@ public class PickingProduct {
         this.status = PickingProductStatus.WAITING;
         this.statusCollected = PickingProductCollectedStatus.WAITING;
     }
+
+    public void validProduct(String code) {
+        if (!code.equalsIgnoreCase(this.getProduct().getCode())) {
+            throw new RuntimeException("Product on system different of product on position! " + this.getProduct().getCode() + " != " + code);
+        }
+
+        if (this.statusCollected.equals(PickingProductCollectedStatus.COMPLETED)) {
+            throw new RuntimeException("Product already collected!");
+        }
+    }
+
+    public BigDecimal collectProduct(BigDecimal amount) {
+
+        BigDecimal remaining = this.requestedAmount.subtract(this.collectedAmount);
+
+        BigDecimal collectedNow = amount.min(remaining);
+
+        this.collectedAmount = this.collectedAmount.add(collectedNow);
+
+        if (this.collectedAmount.compareTo(this.requestedAmount) == 0) {
+            this.statusCollected = PickingProductCollectedStatus.COMPLETED;
+            this.status = PickingProductStatus.COLLECTED;
+        } else {
+            this.statusCollected = PickingProductCollectedStatus.PARTIAL;
+        }
+
+        return collectedNow;
+    }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rokaly.sca.dto.PickingProductsRequest;
 import rokaly.sca.utils.enums.PickingOrderStatus;
+import rokaly.sca.utils.enums.PickingProductCollectedStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,5 +66,15 @@ public class PickingOrder {
             throw new RuntimeException("The products must be different in a Picking Order!");
         }
 
+    }
+
+    public void checkAndFinish() {
+        boolean check = this.getPickingProducts().stream()
+                .allMatch(p -> p.getStatusCollected() == PickingProductCollectedStatus.COMPLETED);
+
+        if (check) {
+            this.setStatus(PickingOrderStatus.FINISHED);
+            this.setFinishedAt(LocalDateTime.now());
+        }
     }
 }

@@ -4,7 +4,6 @@ public enum PickingOrderStatus {
 
     CREATED("Criado"),
     ASSIGNED("Atribuído"),
-    IN_PROGRESS("Em progresso"),
     FINISHED("Finalizado"),
     CANCELED("Cancelado");
 

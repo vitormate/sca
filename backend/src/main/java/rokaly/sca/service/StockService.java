@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.StockEntryRequest;
-import rokaly.sca.dto.StockEntryExitResponse;
+import rokaly.sca.dto.StockEntryResponse;
 import rokaly.sca.dto.StockExitRequest;
 import rokaly.sca.entity.MovementStock;
 import rokaly.sca.entity.Position;
@@ -19,8 +19,6 @@ import rokaly.sca.repository.ProductRepository;
 import rokaly.sca.repository.StockRepository;
 import rokaly.sca.utils.enums.MovementType;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,7 +36,7 @@ public class StockService {
         this.positionRepository = positionRepository;
     }
 
-    public ResponseEntity<StockEntryExitResponse> createEntries(StockEntryRequest data, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<StockEntryResponse> createEntries(StockEntryRequest data, UriComponentsBuilder uriBuilder) {
         Stock.isValidAmount(data.amount());
 
         Product product = productRepository.findById(data.productId()).orElseThrow(
@@ -56,17 +54,17 @@ public class StockService {
         Stock stock = new Stock(product, position, data.amount());
         stockRepository.save(stock);
 
-        MovementStock movementStock = new MovementStock(product.getCode(), product.getName(), position.getCode(), data.amount(), MovementType.IN,data.name(), data.reason());
+        MovementStock movementStock = MovementStock.createIn(product.getCode(), product.getName(), position.getCode(), data.amount(), data.name(), data.reason());
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
-        StockEntryExitResponse dto = new StockEntryExitResponse(stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
+        StockEntryResponse dto = new StockEntryResponse(stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
 
         return ResponseEntity.created(uri).body(dto);
     }
 
-    public ResponseEntity<Page<StockEntryExitResponse>> getAll(Pageable pagination) {
-        Page<StockEntryExitResponse> stock = stockRepository.findAll(pagination).map(StockEntryExitResponse::new);
+    public ResponseEntity<Page<StockEntryResponse>> getAll(Pageable pagination) {
+        Page<StockEntryResponse> stock = stockRepository.findAll(pagination).map(StockEntryResponse::new);
         return ResponseEntity.ok(stock);
     }
 
