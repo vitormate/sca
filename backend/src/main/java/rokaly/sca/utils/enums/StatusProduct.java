@@ -5,7 +5,7 @@ public enum StatusProduct {
     ACTIVE("ATIVO"),
     INACTIVE("INATIVO");
 
-    private String status;
+    private final String status;
 
     StatusProduct(String status) {
         this.status = status;

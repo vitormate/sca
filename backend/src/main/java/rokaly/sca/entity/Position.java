@@ -11,7 +11,7 @@ import rokaly.sca.utils.enums.StatusPosition;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Positions {
+public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +22,7 @@ public class Positions {
     @Column(length = 25, nullable = false)
     private StatusPosition status;
 
-    public Positions(String code) {
+    public Position(String code) {
         this.code = code;
         this.status = StatusPosition.ACTIVE;
     }
@@ -34,5 +34,12 @@ public class Positions {
 
     public void deleteLogic() {
         this.status = StatusPosition.INACTIVE;
+    }
+
+    public void isActivePositionStatus(StatusPosition status) {
+        if (status != StatusPosition.ACTIVE) {
+            // Trocar para Exception de Regra de Negócio quando criar o GlobalException
+            throw new RuntimeException("Position not active. Status: " + status);
+        }
     }
 }

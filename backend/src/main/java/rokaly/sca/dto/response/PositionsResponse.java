@@ -1,9 +1,9 @@
-package rokaly.sca.dto;
+package rokaly.sca.dto.response;
 
-import rokaly.sca.entity.Positions;
+import rokaly.sca.entity.Position;
 
 public record PositionsResponse(Long id, String code, String status) {
-    public PositionsResponse(Positions p) {
+    public PositionsResponse(Position p) {
         this(p.getId(), p.getCode(), p.getStatus().getStatusPT());
     }
 }

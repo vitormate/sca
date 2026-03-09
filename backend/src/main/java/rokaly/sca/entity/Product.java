@@ -19,8 +19,8 @@ public class Product {
     @Column(length = 50, nullable = false, unique = true)
     private String code;
 
-    @Column(length = 50, nullable = false, unique = true)
-    private String description;
+    @Column(length = 150, nullable = false, unique = true)
+    private String name;
 
     @Column(length = 10, nullable = false)
     private String unit;
@@ -29,20 +29,27 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private StatusProduct status;
 
-    public Product(String code, String description, String unit) {
+    public Product(String code, String name, String unit) {
         this.code = code;
-        this.description = description;
+        this.name = name;
         this.unit = unit;
         this.status = StatusProduct.ACTIVE;
     }
 
     public void update(String description, String unit, StatusProduct status) {
-        if (description != null) this.description = description;
+        if (description != null) this.name = description;
         if (unit != null) this.unit = unit;
         if (status != null) this.status = status;
     }
 
     public void deleteLogic() {
         this.status = StatusProduct.INACTIVE;
+    }
+
+    public void isActiveProductStatus(StatusProduct status) {
+        if (status != StatusProduct.ACTIVE) {
+            // Trocar para Exception de Regra de Negócio quando criar o GlobalException
+            throw new RuntimeException("Product is not active. Status: " + status);
+        }
     }
 }

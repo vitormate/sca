@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.ProductResponse;
-import rokaly.sca.dto.ProductResquest;
-import rokaly.sca.dto.UpdateProductRequest;
+import rokaly.sca.dto.response.ProductResponse;
+import rokaly.sca.dto.request.ProductResquest;
+import rokaly.sca.dto.request.UpdateProductRequest;
 import rokaly.sca.entity.Product;
 import rokaly.sca.repository.ProductRepository;
 
@@ -22,7 +22,7 @@ public class ProductService {
     }
 
     public ResponseEntity<ProductResponse> createProductService(ProductResquest data, UriComponentsBuilder uriBuilder) {
-        Product product = new Product(data.code(), data.description(), data.unit());
+        Product product = new Product(data.code(), data.name(), data.unit());
         repository.save(product);
         var uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getId()).toUri();
         ProductResponse dto = new ProductResponse(product);

@@ -8,39 +8,41 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.*;
-import rokaly.sca.service.PositionsService;
+import rokaly.sca.dto.request.PositionsRequest;
+import rokaly.sca.dto.request.UpdatePositionRequest;
+import rokaly.sca.dto.response.PositionsResponse;
+import rokaly.sca.service.PositionService;
 
 @RestController
-@RequestMapping("/api/v1/positions")
-public class PositionsController {
+@RequestMapping("/api/v3/positions")
+public class PositionController {
 
-    private final PositionsService positionsService;
+    private final PositionService positionService;
 
-    public PositionsController(PositionsService positionsService) {
-        this.positionsService = positionsService;
+    public PositionController(PositionService positionService) {
+        this.positionService = positionService;
     }
 
     @PostMapping
     @Transactional
     public ResponseEntity<PositionsResponse> createPosition(@RequestBody @Valid PositionsRequest data, UriComponentsBuilder uriBuilder) {
-        return positionsService.createPositionService(data, uriBuilder);
+        return positionService.createPositionService(data, uriBuilder);
     }
 
     @GetMapping
     public ResponseEntity<Page<PositionsResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
-        return positionsService.getAllService(pagination);
+        return positionService.getAllService(pagination);
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity<PositionsResponse> putPosition(@RequestBody @Valid UpdatePositionRequest data) {
-        return positionsService.putPositionService(data);
+        return positionService.putPositionService(data);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Void> deleteLogicPosition(@PathVariable Long id) {
-        return positionsService.deleteLogicService(id);
+        return positionService.deleteLogicService(id);
     }
 }

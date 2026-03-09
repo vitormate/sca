@@ -1,4 +1,4 @@
-package rokaly.sca.dto;
+package rokaly.sca.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -6,7 +6,7 @@ public record ProductResquest(
         @NotBlank
         String code,
         @NotBlank
-        String description,
+        String name,
         @NotBlank
         String unit) {
 }
