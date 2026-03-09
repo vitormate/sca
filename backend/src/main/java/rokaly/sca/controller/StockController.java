@@ -30,12 +30,6 @@ public class StockController {
         return stockService.createEntries(data, uriBuilder);
     }
 
-//    @PostMapping("transfer")
-//    @Transactional
-//    public ResponseEntity<StockResponse> createTransfer(@RequestBody @Valid StockTransferRequest data) {
-//        return stockService.createRecord(data);
-//    }
-//
     @PutMapping("/adjustment")
     @Transactional
     public ResponseEntity<StockResponse> createAdjustment(@RequestBody @Valid StockAdjustmentRequest data) {

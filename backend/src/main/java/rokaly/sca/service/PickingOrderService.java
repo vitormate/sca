@@ -118,8 +118,10 @@ public class PickingOrderService {
         BigDecimal collectNow = pickingProduct.collectProduct(stock.getAmount());
         stock.collectAmount(collectNow);
 
-        MovementStock movementStock = MovementStock.createOut(pickingProduct.getProduct().getCode(), pickingProduct.getProduct().getName(), data.positionCode(), collectNow, pickingOrder.getCreatedBy());
-        movementStockRepository.save(movementStock);
+        if (collectNow.compareTo(BigDecimal.ZERO) > 0) {
+            MovementStock movementStock = MovementStock.createOut(pickingProduct.getProduct().getCode(), pickingProduct.getProduct().getName(), data.positionCode(), collectNow, pickingOrder.getCreatedBy());
+            movementStockRepository.save(movementStock);
+        }
 
         pickingOrder.checkAndFinish();
 

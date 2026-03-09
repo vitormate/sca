@@ -4,7 +4,7 @@ public enum MovementType {
 
     IN("ENTRADA"),
     OUT("SAÍDA"),
-    MOVEMENT("MOVIMENTAÇÃO");
+    ADJUSTMENT("AJUSTE");
 
     private final String type;
 

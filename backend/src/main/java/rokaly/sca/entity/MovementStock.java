@@ -86,7 +86,7 @@ public class MovementStock {
         movementStock.requestedBy = name;
         movementStock.amount = amount;
         movementStock.dateTime = LocalDateTime.now();
-        movementStock.movementType = MovementType.MOVEMENT;
+        movementStock.movementType = MovementType.ADJUSTMENT;
         movementStock.responsible = name;
         movementStock.reason = reason;
         return movementStock;
