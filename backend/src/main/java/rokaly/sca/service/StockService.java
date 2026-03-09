@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
+import rokaly.sca.dto.request.StockAdjustmentRequest;
 import rokaly.sca.dto.request.StockEntryRequest;
-import rokaly.sca.dto.response.StockEntryResponse;
-import rokaly.sca.dto.request.StockExitRequest;
+import rokaly.sca.dto.response.StockResponse;
 import rokaly.sca.entity.MovementStock;
 import rokaly.sca.entity.Position;
 import rokaly.sca.entity.Product;
@@ -17,8 +17,6 @@ import rokaly.sca.repository.MovementStockRepository;
 import rokaly.sca.repository.PositionRepository;
 import rokaly.sca.repository.ProductRepository;
 import rokaly.sca.repository.StockRepository;
-
-import java.util.List;
 
 @Service
 public class StockService {
@@ -35,7 +33,7 @@ public class StockService {
         this.positionRepository = positionRepository;
     }
 
-    public ResponseEntity<StockEntryResponse> createEntries(StockEntryRequest data, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<StockResponse> createEntries(StockEntryRequest data, UriComponentsBuilder uriBuilder) {
         Stock.isValidAmount(data.amount());
 
         Product product = productRepository.findById(data.productId()).orElseThrow(
@@ -57,13 +55,30 @@ public class StockService {
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
-        StockEntryResponse dto = new StockEntryResponse(stock.getId(), stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
+        StockResponse dto = new StockResponse(stock.getId(), stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
 
         return ResponseEntity.created(uri).body(dto);
     }
 
-    public ResponseEntity<Page<StockEntryResponse>> getAll(Pageable pagination) {
-        Page<StockEntryResponse> stock = stockRepository.findAll(pagination).map(StockEntryResponse::new);
+    public ResponseEntity<Page<StockResponse>> getAll(Pageable pagination) {
+        Page<StockResponse> stock = stockRepository.findAll(pagination).map(StockResponse::new);
         return ResponseEntity.ok(stock);
+    }
+
+    public ResponseEntity<StockResponse> createAdjustment(StockAdjustmentRequest data) {
+        Stock.isValidAmount(data.newAmount());
+
+        Stock stock = stockRepository.findById(data.id()).orElseThrow(
+                () -> new EntityNotFoundException("Stock not found with id: " + data.id())
+        );
+
+        stock.updateAmount(data.newAmount());
+
+        MovementStock movementStock = MovementStock.createAjustment(stock.getProduct().getCode(), stock.getProduct().getName(), stock.getPosition().getCode(), data.newAmount(), data.responsible(), data.reason());
+        movementStockRepository.save(movementStock);
+
+        StockResponse dto = new StockResponse(stock);
+
+        return ResponseEntity.ok(dto);
     }
 }

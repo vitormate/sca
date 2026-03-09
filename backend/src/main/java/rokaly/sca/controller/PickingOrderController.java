@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rokaly.sca.dto.request.PickingOrderAssignRequest;
+import rokaly.sca.dto.request.PickingOrderCancelRequest;
 import rokaly.sca.dto.request.PickingOrderCreateRequest;
 import rokaly.sca.dto.request.PickingProductsCollectRequest;
 import rokaly.sca.dto.response.PickingOrderResponse;
@@ -63,7 +64,7 @@ public class PickingOrderController {
 
     @PutMapping("/{orderId}/products/cancel")
     @Transactional
-    public ResponseEntity<PickingOrderResponse> cancelOrder(@PathVariable Long orderId) {
-        return pickingOrderService.cancelOrder(orderId);
+    public ResponseEntity<PickingOrderResponse> cancelOrder(@PathVariable Long orderId, @RequestBody @Valid PickingOrderCancelRequest data) {
+        return pickingOrderService.cancelOrder(orderId, data);
     }
 }

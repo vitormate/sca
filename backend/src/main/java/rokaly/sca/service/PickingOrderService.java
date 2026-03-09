@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rokaly.sca.dto.request.PickingOrderAssignRequest;
+import rokaly.sca.dto.request.PickingOrderCancelRequest;
 import rokaly.sca.dto.request.PickingOrderCreateRequest;
 import rokaly.sca.dto.request.PickingProductsCollectRequest;
 import rokaly.sca.dto.response.PickingOrderResponse;
@@ -115,7 +116,7 @@ public class PickingOrderService {
 
         pickingProduct.validProduct(stock.getProduct().getCode());
         BigDecimal collectNow = pickingProduct.collectProduct(stock.getAmount());
-        stock.updateAmount(collectNow);
+        stock.collectAmount(collectNow);
 
         MovementStock movementStock = MovementStock.createOut(pickingProduct.getProduct().getCode(), pickingProduct.getProduct().getName(), data.positionCode(), collectNow, pickingOrder.getCreatedBy());
         movementStockRepository.save(movementStock);
@@ -144,7 +145,7 @@ public class PickingOrderService {
         return ResponseEntity.ok(orderResponse);
     }
 
-    public ResponseEntity<PickingOrderResponse> cancelOrder(Long orderId) {
+    public ResponseEntity<PickingOrderResponse> cancelOrder(Long orderId, PickingOrderCancelRequest data) {
         PickingOrder pickingOrder = pickingOrderRepository.findById(orderId).orElseThrow(
                 () -> new EntityNotFoundException("Order not found with id: " + orderId)
         );
@@ -159,6 +160,8 @@ public class PickingOrderService {
                 );
 
                 stock.addAmount(p.getCollectedAmount());
+
+                MovementStock movementStock = MovementStock.createIn(p.getProduct().getCode(), p.getProduct().getName(), p.getSuggestedPosition(), p.getCollectedAmount(), data.name(), data.reason());
             }
 
             p.setStatus(PickingProductStatus.CANCELED);
