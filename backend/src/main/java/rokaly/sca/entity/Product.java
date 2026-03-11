@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rokaly.sca.exception.BusinessException;
 import rokaly.sca.utils.enums.StatusProduct;
 
 @Entity
@@ -48,8 +49,7 @@ public class Product {
 
     public void isActiveProductStatus(StatusProduct status) {
         if (status != StatusProduct.ACTIVE) {
-            // Trocar para Exception de Regra de Negócio quando criar o GlobalException
-            throw new RuntimeException("Product is not active. Status: " + status);
+            throw new BusinessException("Product is not active. Status: " + status);
         }
     }
 }

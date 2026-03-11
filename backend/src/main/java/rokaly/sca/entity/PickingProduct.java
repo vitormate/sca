@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rokaly.sca.exception.BusinessException;
 import rokaly.sca.utils.enums.PickingProductCollectedStatus;
 import rokaly.sca.utils.enums.PickingProductStatus;
 
@@ -56,11 +57,11 @@ public class PickingProduct {
 
     public void validProduct(String code) {
         if (!code.equalsIgnoreCase(this.getProduct().getCode())) {
-            throw new RuntimeException("Product on system different of product on position! " + this.getProduct().getCode() + " != " + code);
+            throw new BusinessException("Product on system different of product on position! " + this.getProduct().getCode() + " != " + code);
         }
 
         if (this.statusCollected.equals(PickingProductCollectedStatus.COMPLETED)) {
-            throw new RuntimeException("Product already collected!");
+            throw new BusinessException("Product already collected!");
         }
     }
 

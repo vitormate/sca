@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rokaly.sca.dto.request.PickingProductsRequest;
+import rokaly.sca.exception.BusinessException;
 import rokaly.sca.utils.enums.PickingOrderStatus;
 import rokaly.sca.utils.enums.PickingProductCollectedStatus;
 
@@ -62,8 +63,7 @@ public class PickingOrder {
                 .count() != pickingProducts.size();
 
         if (hasDuplicates) {
-            // Trocar por business exception
-            throw new RuntimeException("The products must be different in a Picking Order!");
+            throw new BusinessException("The products must be different in a Picking Order!");
         }
 
     }
