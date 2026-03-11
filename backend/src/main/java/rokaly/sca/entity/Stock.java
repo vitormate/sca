@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rokaly.sca.exception.BusinessException;
 
 import java.math.BigDecimal;
 
@@ -37,16 +38,14 @@ public class Stock {
 
     public static void isValidAmount(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
-//            Substitutir por business exception quando fiz a global exception
-            throw new RuntimeException("Amount need to be bigger than 0(zero). Amount: " + amount);
+            throw new BusinessException("Amount need to be bigger than 0(zero). Amount: " + amount);
         }
 
     }
 
     public void validStock() {
         if (this.amount.compareTo(BigDecimal.ZERO) <= 0) {
-//            Substitutir por business exception quando fiz a global exception
-            throw new RuntimeException("Insufficient stock! Stock: " + this.amount);
+            throw new BusinessException("Insufficient stock! Stock: " + this.amount);
         }
     }
 

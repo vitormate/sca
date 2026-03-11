@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rokaly.sca.exception.BusinessException;
 import rokaly.sca.utils.enums.StatusPosition;
 
 @Entity
@@ -38,8 +39,7 @@ public class Position {
 
     public void isActivePositionStatus(StatusPosition status) {
         if (status != StatusPosition.ACTIVE) {
-            // Trocar para Exception de Regra de Negócio quando criar o GlobalException
-            throw new RuntimeException("Position not active. Status: " + status);
+            throw new BusinessException("Position not active. Status: " + status);
         }
     }
 }

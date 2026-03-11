@@ -164,6 +164,7 @@ public class PickingOrderService {
                 stock.addAmount(p.getCollectedAmount());
 
                 MovementStock movementStock = MovementStock.createIn(p.getProduct().getCode(), p.getProduct().getName(), p.getSuggestedPosition(), p.getCollectedAmount(), data.name(), data.reason());
+                movementStockRepository.save(movementStock);
             }
 
             p.setStatus(PickingProductStatus.CANCELED);
