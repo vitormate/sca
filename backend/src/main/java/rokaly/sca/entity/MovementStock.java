@@ -49,46 +49,4 @@ public class MovementStock {
 
     @Column(length = 255)
     private String reason;
-
-    public static MovementStock createIn(String productCode, String productName, String positionCode, BigDecimal amount, String name, String reason) {
-        MovementStock movementStock = new MovementStock();
-        movementStock.productCode = productCode;
-        movementStock.productName = productName;
-        movementStock.toPosition = positionCode;
-        movementStock.requestedBy = name;
-        movementStock.amount = amount;
-        movementStock.dateTime = LocalDateTime.now();
-        movementStock.movementType = MovementType.IN;
-        movementStock.responsible = name;
-        movementStock.reason = reason;
-        return movementStock;
-    }
-
-    public static MovementStock createOut(String productCode, String productName, String positionCode, BigDecimal amount, String name) {
-        MovementStock movementStock = new MovementStock();
-        movementStock.productCode = productCode;
-        movementStock.productName = productName;
-        movementStock.fromPosition = positionCode;
-        movementStock.requestedBy = name;
-        movementStock.amount = amount;
-        movementStock.dateTime = LocalDateTime.now();
-        movementStock.movementType = MovementType.OUT;
-        movementStock.responsible = name;
-        movementStock.reason = "";
-        return movementStock;
-    }
-
-    public static MovementStock createAjustment(String productCode, String productName, String positionCode, BigDecimal amount, String name, String reason) {
-        MovementStock movementStock = new MovementStock();
-        movementStock.productCode = productCode;
-        movementStock.productName = productName;
-        movementStock.fromPosition = positionCode;
-        movementStock.requestedBy = name;
-        movementStock.amount = amount;
-        movementStock.dateTime = LocalDateTime.now();
-        movementStock.movementType = MovementType.ADJUSTMENT;
-        movementStock.responsible = name;
-        movementStock.reason = reason;
-        return movementStock;
-    }
 }
