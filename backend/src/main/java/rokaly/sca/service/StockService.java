@@ -17,6 +17,7 @@ import rokaly.sca.repository.MovementStockRepository;
 import rokaly.sca.repository.PositionRepository;
 import rokaly.sca.repository.ProductRepository;
 import rokaly.sca.repository.StockRepository;
+import rokaly.sca.utils.mappers.MovementStockMapper;
 
 @Service
 public class StockService {
@@ -51,7 +52,7 @@ public class StockService {
         Stock stock = new Stock(product, position, data.amount());
         stockRepository.save(stock);
 
-        MovementStock movementStock = MovementStock.createIn(product.getCode(), product.getName(), position.getCode(), data.amount(), data.name(), data.reason());
+        MovementStock movementStock = MovementStockMapper.createIn(product.getCode(), product.getName(), position.getCode(), data.amount(), data.name(), data.reason());
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
@@ -74,7 +75,7 @@ public class StockService {
 
         stock.updateAmount(data.newAmount());
 
-        MovementStock movementStock = MovementStock.createAjustment(stock.getProduct().getCode(), stock.getProduct().getName(), stock.getPosition().getCode(), data.newAmount(), data.responsible(), data.reason());
+        MovementStock movementStock = MovementStockMapper.createAjustment(stock.getProduct().getCode(), stock.getProduct().getName(), stock.getPosition().getCode(), data.newAmount(), data.responsible(), data.reason());
         movementStockRepository.save(movementStock);
 
         StockResponse dto = new StockResponse(stock);

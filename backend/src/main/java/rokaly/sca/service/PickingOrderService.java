@@ -16,6 +16,7 @@ import rokaly.sca.repository.*;
 import rokaly.sca.utils.enums.PickingOrderStatus;
 import rokaly.sca.utils.enums.PickingProductCollectedStatus;
 import rokaly.sca.utils.enums.PickingProductStatus;
+import rokaly.sca.utils.mappers.MovementStockMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -119,7 +120,7 @@ public class PickingOrderService {
         stock.collectAmount(collectNow);
 
         if (collectNow.compareTo(BigDecimal.ZERO) > 0) {
-            MovementStock movementStock = MovementStock.createOut(pickingProduct.getProduct().getCode(), pickingProduct.getProduct().getName(), data.positionCode(), collectNow, pickingOrder.getCreatedBy());
+            MovementStock movementStock = MovementStockMapper.createOut(pickingProduct.getProduct().getCode(), pickingProduct.getProduct().getName(), data.positionCode(), collectNow, pickingOrder.getCreatedBy());
             movementStockRepository.save(movementStock);
         }
 
@@ -163,7 +164,7 @@ public class PickingOrderService {
 
                 stock.addAmount(p.getCollectedAmount());
 
-                MovementStock movementStock = MovementStock.createIn(p.getProduct().getCode(), p.getProduct().getName(), p.getSuggestedPosition(), p.getCollectedAmount(), data.name(), data.reason());
+                MovementStock movementStock = MovementStockMapper.createIn(p.getProduct().getCode(), p.getProduct().getName(), p.getSuggestedPosition(), p.getCollectedAmount(), data.name(), data.reason());
                 movementStockRepository.save(movementStock);
             }
 
