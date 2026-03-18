@@ -75,7 +75,9 @@ public class PickingOrderService {
                 () -> new EntityNotFoundException("Picking Order not found with id: " + id)
         );
 
-        User user = userRepository.findByUsername(data.separator());
+        User user = userRepository.findByUsername(data.separator()).orElseThrow(
+                () -> new EntityNotFoundException("User not found with id: " + id)
+        );
         pickingOrder.setSeparator(user);
         pickingOrder.setAssignedAt(LocalDateTime.now());
         pickingOrder.setStatus(PickingOrderStatus.ASSIGNED);
