@@ -1,6 +1,7 @@
 package rokaly.sca.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +32,12 @@ public class User implements UserDetails {
     @Column(length = 25, nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public User(String username, String encode, Role role) {
+        this.username = username;
+        this.password = encode;
+        this.role = role;
+    }
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
             return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
