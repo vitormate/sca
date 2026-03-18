@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.request.StockAdjustmentRequest;
 import rokaly.sca.dto.request.StockEntryRequest;
-import rokaly.sca.dto.request.StockTransferRequest;
 import rokaly.sca.dto.response.StockResponse;
 import rokaly.sca.service.StockService;
 
