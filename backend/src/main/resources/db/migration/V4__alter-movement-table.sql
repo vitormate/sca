@@ -1,0 +1,2 @@
+ALTER TABLE movement
+ADD COLUMN reason VARCHAR(255);

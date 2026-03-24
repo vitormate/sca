@@ -1,0 +1,48 @@
+package rokaly.sca.controller;
+
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import rokaly.sca.dto.request.ProductResquest;
+import rokaly.sca.dto.request.UpdateProductRequest;
+import rokaly.sca.dto.response.ProductResponse;
+import rokaly.sca.service.ProductService;
+
+@RestController
+@RequestMapping("/api/v3/products")
+public class ProductController {
+
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductResquest data, UriComponentsBuilder uriBuilder) {
+        return productService.createProductService(data, uriBuilder);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ProductResponse>> getAll(@PageableDefault(size = 10, page = 0, sort = {"id"}) Pageable pagination) {
+        return productService.getAllService(pagination);
+    }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity<ProductResponse> putProduct(@RequestBody @Valid UpdateProductRequest data) {
+        return productService.putProductService(data);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> deleteLogicProduct(@PathVariable Long id) {
+        return productService.deleteLogicProductService(id);
+    }
+}
