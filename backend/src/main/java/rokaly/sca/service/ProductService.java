@@ -36,7 +36,7 @@ public class ProductService {
 
     public ResponseEntity<ProductResponse> putProductService(UpdateProductRequest data) {
         Product product = repository.findById(data.id()).orElseThrow(
-                () -> new EntityNotFoundException("Produto não encontrado com id: " + data.id()));
+                () -> new EntityNotFoundException("Product not found with id: " + data.id()));
 
         product.update(data.description(), data.unit(), data.status());
         ProductResponse dto = new ProductResponse(product);
@@ -45,7 +45,7 @@ public class ProductService {
 
     public ResponseEntity<Void> deleteLogicProductService(Long id) {
         Product product = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Produto não encontrado com id: " + id));
+                () -> new EntityNotFoundException("Product not found with id: " + id));
 
         product.deleteLogic();
         return ResponseEntity.noContent().build();
