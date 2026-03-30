@@ -35,7 +35,6 @@ class ProductServiceTest {
     @BeforeEach
     void setUp() {
         this.product = new Product("123AV32", "Ball", "UN");
-        this.product.setId(1L);
 
         this.update = new UpdateProductRequest(1L, null, null, StatusProduct.INACTIVE);
     }
