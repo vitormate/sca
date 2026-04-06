@@ -1,7 +1,6 @@
 package rokaly.sca.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -181,7 +180,7 @@ class StockServiceTest {
     }
 
     @Nested
-    class createAdjustment {
+    class createAdjustmentTests {
 
         @Test
         void shouldReturnStatusCode200() {

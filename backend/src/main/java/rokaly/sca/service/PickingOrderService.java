@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.request.PickingOrderAssignRequest;
 import rokaly.sca.dto.request.PickingOrderCancelRequest;
 import rokaly.sca.dto.request.PickingOrderCreateRequest;
@@ -41,7 +42,7 @@ public class PickingOrderService {
         this.pickingProductRepository = pickingProductRepository;
     }
 
-    public ResponseEntity<Void> createOrder(PickingOrderCreateRequest data) {
+    public ResponseEntity<PickingOrderResponse> createOrder(PickingOrderCreateRequest data, UriComponentsBuilder uriBuilder) {
         PickingOrder.validProducts(data.pickingProducts());
 
         PickingOrder pickingOrder = new PickingOrder(data.createdBy(), LocalDateTime.now(), PickingOrderStatus.CREATED);
@@ -51,7 +52,7 @@ public class PickingOrderService {
                     .findPositionByProductId(p.productId())
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + p.productId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Position not found with id: " + p.productId()));
 
             Product product = productRepository.findById(p.productId()).orElseThrow(
                     () -> new EntityNotFoundException("Product not found with id: " + p.productId())
@@ -63,7 +64,10 @@ public class PickingOrderService {
 
         pickingOrderRepository.save(pickingOrder);
 
-        return ResponseEntity.ok().build();
+        var uri = uriBuilder.path("/{id}").buildAndExpand(pickingOrder.getId()).toUri();
+        PickingOrderResponse dto = new PickingOrderResponse(pickingOrder);
+
+        return ResponseEntity.created(uri).body(dto);
     }
 
     public ResponseEntity<Page<PickingOrderResponse>> getAll(Pageable pagination) {
