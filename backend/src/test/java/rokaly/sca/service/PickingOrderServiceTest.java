@@ -10,14 +10,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
+import rokaly.sca.dto.request.PickingOrderAssignRequest;
 import rokaly.sca.dto.request.PickingOrderCreateRequest;
 import rokaly.sca.dto.request.PickingProductsRequest;
 import rokaly.sca.entity.PickingOrder;
+import rokaly.sca.entity.PickingProduct;
 import rokaly.sca.entity.Product;
+import rokaly.sca.entity.User;
 import rokaly.sca.exception.BusinessException;
 import rokaly.sca.repository.*;
+import rokaly.sca.utils.enums.PickingOrderStatus;
+import rokaly.sca.utils.enums.PickingProductCollectedStatus;
+import rokaly.sca.utils.enums.PickingProductStatus;
+import rokaly.sca.utils.enums.Role;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,9 +60,11 @@ class PickingOrderServiceTest {
 
     UriComponentsBuilder uriBuilder;
     PickingOrderCreateRequest pickingOrderCreateRequest;
-
     Product product1;
     Product product2;
+    PickingOrder pickingOrder;
+    User user;
+    PickingProduct pickingProduct;
 
     @BeforeEach
     void setUp() {
@@ -64,6 +74,14 @@ class PickingOrderServiceTest {
         this.product1.setId(1L);
         this.product2 = new Product("ABC321", "Football Ball", "UN");
         this.product2.setId(2L);
+
+        this.user = new User("separator", "123456", Role.SEPARATOR);
+
+        this.pickingOrder = new PickingOrder("admin", LocalDateTime.now().minusHours(1), PickingOrderStatus.CREATED);
+        this.pickingOrder.setId(1L);
+        this.pickingProduct = new PickingProduct(new BigDecimal(10), "AP01-01-01", product1, pickingOrder);
+        List<PickingProduct> pickingProducts = List.of(pickingProduct);
+        this.pickingOrder.setPickingProducts(pickingProducts);
     }
 
     @Nested
@@ -162,8 +180,66 @@ class PickingOrderServiceTest {
         }
     }
 
-    @Test
-    void assignOrder() {
+    @Nested
+    class AssignOrderTests {
+
+        @Test
+        void shouldReturnStatusCode200() {
+            PickingOrderAssignRequest data = new PickingOrderAssignRequest("admin");
+            when(pickingOrderRepository.findById(1L)).thenReturn(Optional.of(pickingOrder));
+            when(userRepository.findByUsername(data.separator())).thenReturn(Optional.of(user));
+
+            int statusCode = pickingOrderService.assignOrder(1L, data).getStatusCode().value();
+
+            assertEquals(HttpStatus.OK.value(), statusCode);
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findByUsername(any(String.class));
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+            verifyNoInteractions(pickingProductRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenPickingOrderNotFound() {
+            PickingOrderAssignRequest data = new PickingOrderAssignRequest("admin");
+
+            when(pickingOrderRepository.findById(1L)).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.assignOrder(1L, data)
+            );
+
+            assertEquals("Picking Order not found with id: 1", exception.getMessage());
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+            verifyNoInteractions(pickingProductRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenUserNotFound() {
+            PickingOrderAssignRequest data = new PickingOrderAssignRequest("admin");
+
+            when(pickingOrderRepository.findById(1L)).thenReturn(Optional.of(pickingOrder));
+            when(userRepository.findByUsername(data.separator())).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.assignOrder(1L, data)
+            );
+
+            assertEquals("User not found with id: 1", exception.getMessage());
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verify(userRepository, times(1)).findByUsername(any(String.class));
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+            verifyNoInteractions(pickingProductRepository);
+        }
     }
 
     @Test
