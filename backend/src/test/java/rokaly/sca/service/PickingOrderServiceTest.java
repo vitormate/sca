@@ -10,10 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
-import rokaly.sca.dto.request.PickingOrderAssignRequest;
-import rokaly.sca.dto.request.PickingOrderCreateRequest;
-import rokaly.sca.dto.request.PickingProductsCollectRequest;
-import rokaly.sca.dto.request.PickingProductsRequest;
+import rokaly.sca.dto.request.*;
 import rokaly.sca.entity.*;
 import rokaly.sca.exception.BusinessException;
 import rokaly.sca.repository.*;
@@ -429,11 +426,83 @@ class PickingOrderServiceTest {
         }
     }
 
-    @Test
-    void finishOrderWithPartialCollection() {
+    @Nested
+    class FinishOrderWithPartialCollectionTests {
+
+        @Test
+        void shouldReturnStatusCode200() {
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+
+            int statusCode = pickingOrderService.finishOrderWithPartialCollection(1L).getStatusCode().value();
+
+            assertEquals(HttpStatus.OK.value(), statusCode);
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenPickingOrderNotFound() {
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.finishOrderWithPartialCollection(1L)
+            );
+
+            assertEquals("Order not found with id: 1", exception.getMessage());
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
     }
 
-    @Test
-    void cancelOrder() {
+    @Nested
+    class CancelOrderTests {
+
+        @Test
+        void shouldReturnStatusCode200() {
+            PickingOrderCancelRequest data = new PickingOrderCancelRequest("admin", "");
+
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+
+            int statusCode = pickingOrderService.cancelOrder(1L, data).getStatusCode().value();
+
+            assertEquals(HttpStatus.OK.value(), statusCode);
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenPickingOrderNotFound() {
+            PickingOrderCancelRequest data = new PickingOrderCancelRequest("admin", "");
+
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.cancelOrder(1L, data)
+            );
+
+            assertEquals("Order not found with id: 1", exception.getMessage());
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(movementStockRepository);
+
+        }
+
     }
 }
