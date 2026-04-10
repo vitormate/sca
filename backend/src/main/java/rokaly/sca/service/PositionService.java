@@ -36,7 +36,7 @@ public class PositionService {
 
     public ResponseEntity<PositionsResponse> putPositionService(UpdatePositionRequest data) {
         Position position = repository.findById(data.id()).orElseThrow(
-                () -> new EntityNotFoundException("Posição não encontrado com id: " + data.id()));
+                () -> new EntityNotFoundException("Position not found with id: " + data.id()));
         position.update(data.code(), data.status());
         PositionsResponse dto = new PositionsResponse(position);
         return ResponseEntity.ok(dto);
@@ -44,7 +44,7 @@ public class PositionService {
 
     public ResponseEntity<Void> deleteLogicService(Long id) {
         Position position = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Posição não encontrado com id: " + id));
+                () -> new EntityNotFoundException("Position not found with id: " + id));
         position.deleteLogic();
         return ResponseEntity.noContent().build();
     }
