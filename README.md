@@ -33,6 +33,8 @@
   <li>Flyway</li>
   <li>Lombok</li>
   <li>Swagger / OpenAPI</li>
+  <li>JUnit 5</li>
+  <li>Mockito</li>
 </ul>
 
 <h2>🏛️ Arquitetura</h2>

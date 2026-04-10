@@ -56,7 +56,7 @@ public class StockService {
         movementStockRepository.save(movementStock);
 
         var uri = uriBuilder.path("/{id}").buildAndExpand(stock.getId()).toUri();
-        StockResponse dto = new StockResponse(stock.getId(), stock.getProduct().getCode() ,stock.getProduct().getName(), stock.getPosition().getCode(), stock.getAmount());
+        StockResponse dto = new StockResponse(stock);
 
         return ResponseEntity.created(uri).body(dto);
     }
