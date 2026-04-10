@@ -242,8 +242,35 @@ class PickingOrderServiceTest {
         }
     }
 
-    @Test
-    void getAllProductsFromOrder() {
+    @Nested
+    class GetAllProductsFromOrderTests {
+
+        @Test
+        void shouldReturnStatusCode200() {
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+
+            int statusCode = pickingOrderService.getAllProductsFromOrder(1L).getStatusCode().value();
+
+            assertEquals(HttpStatus.OK.value(), statusCode);
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(stockRepository);
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+            verifyNoInteractions(pickingProductRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenPickingOrderNotFound() {
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.getAllProductsFromOrder(1L)
+            );
+
+            assertEquals("Order not found with id: 1", exception.getMessage());
+        }
     }
 
     @Test
