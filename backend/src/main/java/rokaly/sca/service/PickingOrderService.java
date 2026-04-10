@@ -122,6 +122,7 @@ public class PickingOrderService {
         );
 
         pickingProduct.validProduct(stock.getProduct().getCode());
+        pickingProduct.validStatus();
         BigDecimal collectNow = pickingProduct.collectProduct(stock.getAmount());
         stock.collectAmount(collectNow);
 

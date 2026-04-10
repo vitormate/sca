@@ -59,7 +59,9 @@ public class PickingProduct {
         if (!code.equalsIgnoreCase(this.getProduct().getCode())) {
             throw new BusinessException("Product on system different of product on position! " + this.getProduct().getCode() + " != " + code);
         }
+    }
 
+    public void validStatus() {
         if (this.statusCollected.equals(PickingProductCollectedStatus.COMPLETED)) {
             throw new BusinessException("Product already collected!");
         }

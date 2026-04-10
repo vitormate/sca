@@ -12,17 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 import rokaly.sca.dto.request.PickingOrderAssignRequest;
 import rokaly.sca.dto.request.PickingOrderCreateRequest;
+import rokaly.sca.dto.request.PickingProductsCollectRequest;
 import rokaly.sca.dto.request.PickingProductsRequest;
-import rokaly.sca.entity.PickingOrder;
-import rokaly.sca.entity.PickingProduct;
-import rokaly.sca.entity.Product;
-import rokaly.sca.entity.User;
+import rokaly.sca.entity.*;
 import rokaly.sca.exception.BusinessException;
 import rokaly.sca.repository.*;
-import rokaly.sca.utils.enums.PickingOrderStatus;
-import rokaly.sca.utils.enums.PickingProductCollectedStatus;
-import rokaly.sca.utils.enums.PickingProductStatus;
-import rokaly.sca.utils.enums.Role;
+import rokaly.sca.utils.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -65,6 +60,7 @@ class PickingOrderServiceTest {
     PickingOrder pickingOrder;
     User user;
     PickingProduct pickingProduct;
+    Position position;
 
     @BeforeEach
     void setUp() {
@@ -82,6 +78,8 @@ class PickingOrderServiceTest {
         this.pickingProduct = new PickingProduct(new BigDecimal(10), "AP01-01-01", product1, pickingOrder);
         List<PickingProduct> pickingProducts = List.of(pickingProduct);
         this.pickingOrder.setPickingProducts(pickingProducts);
+
+        this.position = new Position("AP01-01-01");
     }
 
     @Nested
@@ -273,8 +271,162 @@ class PickingOrderServiceTest {
         }
     }
 
-    @Test
-    void collectProduct() {
+    @Nested
+    class CollectProductTests {
+
+        @Test
+        void shouldReturnStatusCode200() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+            Stock stock = new Stock(product1, position, new BigDecimal(100));
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.of(stock));
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+            when(pickingProductRepository.findByIdAndOrderId(any(Long.class), any(Long.class))).thenReturn(Optional.of(pickingProduct));
+
+            int statusCode = pickingOrderService.collectProduct(1L, 1L, data).getStatusCode().value();
+
+            assertEquals(HttpStatus.OK.value(), statusCode);
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verify(pickingProductRepository, times(1)).findByIdAndOrderId(any(Long.class), any(Long.class));
+            verify(movementStockRepository, times(1)).save(any(MovementStock.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenStockNotFound() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.collectProduct(1L, 1L, data)
+            );
+
+            assertEquals("Stock not found with position: " + data.positionCode(), exception.getMessage());
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(pickingOrderRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnBusinessExceptionWhenStockAmountLessOrEqualZero() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+            Stock stock = new Stock(product1, position, new BigDecimal(0));
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.of(stock));
+
+            BusinessException exception = assertThrows(
+                    BusinessException.class,
+                    () -> pickingOrderService.collectProduct(1L, 1L, data)
+            );
+
+            assertEquals("Insufficient stock! Stock: " + stock.getAmount(), exception.getMessage());
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(pickingOrderRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundExceptionWhenOrderNotFound() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+            Stock stock = new Stock(product1, position, new BigDecimal(100));
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.of(stock));
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.collectProduct(1L, 1L, data)
+            );
+
+            assertEquals("Order not found with id: 1", exception.getMessage());
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(pickingProductRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnEntityNotFoundWhenProductNotFound() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+            Stock stock = new Stock(product1, position, new BigDecimal(100));
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.of(stock));
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+            when(pickingProductRepository.findByIdAndOrderId(any(Long.class), any(Long.class))).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> pickingOrderService.collectProduct(1L, 1L, data)
+            );
+
+            assertEquals("Picking Product not found with id: 1", exception.getMessage());
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verify(pickingProductRepository, times(1)).findByIdAndOrderId(any(Long.class), any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnBusinessExceptionWhenPickingProductNotEqualStockProduct() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+            Stock stock = new Stock(product1, position, new BigDecimal(100));
+            pickingProduct.setProduct(product2);
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.of(stock));
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+            when(pickingProductRepository.findByIdAndOrderId(any(Long.class), any(Long.class))).thenReturn(Optional.of(pickingProduct));
+
+            BusinessException exception = assertThrows(
+                    BusinessException.class,
+                    () -> pickingOrderService.collectProduct(1L, 1L, data)
+            );
+
+            assertEquals("Product on system different of product on position! " + pickingProduct.getProduct().getCode() + " != " + stock.getProduct().getCode(), exception.getMessage());
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verify(pickingProductRepository, times(1)).findByIdAndOrderId(any(Long.class), any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
+
+        @Test
+        void shouldReturnBusinessExceptionWhenProductAlreadyCollected() {
+            PickingProductsCollectRequest data = new PickingProductsCollectRequest("AP01-01-01");
+            Stock stock = new Stock(product1, position, new BigDecimal(100));
+            pickingProduct.setStatusCollected(PickingProductCollectedStatus.COMPLETED);
+
+            when(stockRepository.findByPositionCode(data.positionCode())).thenReturn(Optional.of(stock));
+            when(pickingOrderRepository.findById(any(Long.class))).thenReturn(Optional.of(pickingOrder));
+            when(pickingProductRepository.findByIdAndOrderId(any(Long.class), any(Long.class))).thenReturn(Optional.of(pickingProduct));
+
+            BusinessException exception = assertThrows(
+                    BusinessException.class,
+                    () -> pickingOrderService.collectProduct(1L, 1L, data)
+            );
+
+            assertEquals("Product already collected!", exception.getMessage());
+            verify(stockRepository, times(1)).findByPositionCode(any(String.class));
+            verify(pickingOrderRepository, times(1)).findById(any(Long.class));
+            verify(pickingProductRepository, times(1)).findByIdAndOrderId(any(Long.class), any(Long.class));
+            verifyNoInteractions(userRepository);
+            verifyNoInteractions(productRepository);
+            verifyNoInteractions(movementStockRepository);
+        }
     }
 
     @Test
