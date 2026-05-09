@@ -190,21 +190,3 @@ Após cada coleta:
 
    * Atualiza status da ordem para `FINISHED`
    * Registra data de finalização
-
----
-
-<h2>🚀 Executando o projeto</h2>
-
-1. Clonar o repositório
-
-    * git clone git@github.com:vitormate/sca.git
-
-2. Criar o banco PostgreSQL
-
-3. Configurar application.properties
-
-    * spring.datasource.url=...
-    * spring.datasource.username=...
-    * spring.datasource.password=...
-
-4. Rodar aplicação
