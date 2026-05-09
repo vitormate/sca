@@ -11,6 +11,31 @@
   <li>Registro e auditoria de movimentações</li>
 </ul>
 
+## Como executar
+
+### Pré-requisitos
+
+- Docker instalado
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/vitormate/sca.git
+cd sca
+```
+
+### 2. Suba os containers
+
+```bash
+docker-compose up
+```
+
+O Docker baixa automaticamente a imagem da API e o banco de dados PostgreSQL — nenhuma configuração adicional necessária.
+
+## Documentação (Swagger)
+
+Acesse: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
 <h2>⚙️ Funcionalidades</h2>
 
 <ul type="none" >
@@ -35,6 +60,7 @@
   <li>Swagger / OpenAPI</li>
   <li>JUnit 5</li>
   <li>Mockito</li>
+  <li>Docker</li>
 </ul>
 
 <h2>🏛️ Arquitetura</h2>
@@ -164,21 +190,3 @@ Após cada coleta:
 
    * Atualiza status da ordem para `FINISHED`
    * Registra data de finalização
-
----
-
-<h2>🚀 Executando o projeto</h2>
-
-1. Clonar o repositório
-
-    * git clone git@github.com:vitormate/sca.git
-
-2. Criar o banco PostgreSQL
-
-3. Configurar application.properties
-
-    * spring.datasource.url=...
-    * spring.datasource.username=...
-    * spring.datasource.password=...
-
-4. Rodar aplicação
