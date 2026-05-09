@@ -1,0 +1,41 @@
+services:
+  backend:
+    build: ./
+    container_name: backend_sca
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PG_HOST: ${PG_HOST}
+      PG_DATABASE: ${PG_DATABASE}
+      PG_USER: ${PG_USER}
+      PG_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-app-network
+
+  db:
+    image: postgres:17
+    container_name: db_sca
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    environment:
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    networks:
+      - spring-app-network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:
+
+networks:
+  spring-app-network:
+    driver: bridge
