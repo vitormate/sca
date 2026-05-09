@@ -11,6 +11,31 @@
   <li>Registro e auditoria de movimentações</li>
 </ul>
 
+## Como executar
+
+### Pré-requisitos
+
+- Docker instalado
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/vitormate/sca.git
+cd sca
+```
+
+### 2. Suba os containers
+
+```bash
+docker-compose up
+```
+
+O Docker baixa automaticamente a imagem da API e o banco de dados PostgreSQL — nenhuma configuração adicional necessária.
+
+## Documentação (Swagger)
+
+Acesse: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
 <h2>⚙️ Funcionalidades</h2>
 
 <ul type="none" >
@@ -35,6 +60,7 @@
   <li>Swagger / OpenAPI</li>
   <li>JUnit 5</li>
   <li>Mockito</li>
+  <li>Docker</li>
 </ul>
 
 <h2>🏛️ Arquitetura</h2>
